@@ -6,3 +6,11 @@ authors = ["Graham Wihlidal <graham@wihlidal.ca>"]
 repository = "https://github.com/gwihlidal/vk-sync-rs"
 
 [dependencies]
+
+[features]
+default = ["ash_bind"]
+ash_bind = ["ash"]
+
+[dependencies.ash]
+version = "0.24.4"
+optional = true
