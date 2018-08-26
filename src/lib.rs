@@ -249,11 +249,55 @@ pub struct ImageBarrier {
 // Vulkan's synchronization methods.
 pub fn get_memory_barrier(
     barrier: &GlobalBarrier,
-    src_stages: ash::vk::PipelineStageFlags,
-    dst_stages: ash::vk::PipelineStageFlags,
-) /*-> ash::vk::MemoryBarrier*/
-{
+) -> (
+    ash::vk::PipelineStageFlags,
+    ash::vk::PipelineStageFlags,
+    ash::vk::MemoryBarrier,
+) {
+    let mut src_stages = ash::vk::PipelineStageFlags::empty();
+    let mut dst_stages = ash::vk::PipelineStageFlags::empty();
 
+    let mut memory_barrier = ash::vk::MemoryBarrier {
+        s_type: ash::vk::StructureType::MemoryBarrier,
+        p_next: ::std::ptr::null(),
+        src_access_mask: Default::default(),
+        dst_access_mask: Default::default(),
+    };
+
+    for previous_access in &barrier.previous_accesses {
+        let previous_info = get_access_info(previous_access);
+
+        src_stages |= previous_info.stage_mask;
+
+        // Add appropriate availability operations - for writes only.
+        if is_write_access(previous_access) {
+            memory_barrier.src_access_mask |= previous_info.access_mask;
+        }
+    }
+
+    for next_access in &barrier.next_accesses {
+        let next_info = get_access_info(next_access);
+
+        dst_stages |= next_info.stage_mask;
+
+        // Add visibility operations as necessary.
+        // If the src access mask, this is a WAR hazard (or for some reason a "RAR"),
+        // so the dst access mask can be safely zeroed as these don't need visibility.
+        if memory_barrier.src_access_mask != ash::vk::AccessFlags::empty() {
+            memory_barrier.dst_access_mask |= next_info.access_mask;
+        }
+    }
+
+    // Ensure that the stage masks are valid if no stages were determined
+    if src_stages == ash::vk::PipelineStageFlags::empty() {
+        src_stages = ash::vk::PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    }
+
+    if dst_stages == ash::vk::PipelineStageFlags::empty() {
+        dst_stages = ash::vk::PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    }
+
+    (src_stages, dst_stages, memory_barrier)
 }
 
 // Mapping function that translates a buffer barrier into a set of source and
