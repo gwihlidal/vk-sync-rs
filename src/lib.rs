@@ -172,7 +172,7 @@ pub enum ImageLayout {
 
     // As `General`, but also allows presentation engines to access it - no layout transitions. // Requires VK_KHR_shared_presentable_image to be enabled. Can only be used for shared presentable images (i.e. single-buffered swap chains).
     GeneralAndPresentation,
-}                       
+}
 
 // Global barriers define a set of accesses on multiple resources at once.
 // If a buffer or image doesn't require a queue ownership transfer, or an image
@@ -248,7 +248,9 @@ pub struct ImageBarrier {
 pub fn get_memory_barrier(
     barrier: &GlobalBarrier,
     src_stages: ash::vk::PipelineStageFlags,
-    dst_stages: ash::vk::PipelineStageFlags) /*-> ash::vk::MemoryBarrier*/ {
+    dst_stages: ash::vk::PipelineStageFlags,
+) /*-> ash::vk::MemoryBarrier*/
+{
 
 }
 
@@ -258,7 +260,9 @@ pub fn get_memory_barrier(
 pub fn get_buffer_memory_barrier(
     barrier: &BufferBarrier,
     src_stages: ash::vk::PipelineStageFlags,
-    dst_stages: ash::vk::PipelineStageFlags) /*-> ash::vk::BufferMemoryBarrier*/ {
+    dst_stages: ash::vk::PipelineStageFlags,
+) /*-> ash::vk::BufferMemoryBarrier*/
+{
 
 }
 
@@ -268,6 +272,8 @@ pub fn get_buffer_memory_barrier(
 pub fn get_image_memory_barrier(
     barrier: &ImageBarrier,
     src_stages: ash::vk::PipelineStageFlags,
-    dst_stages: ash::vk::PipelineStageFlags) /*-> ash::vk::ImageMemoryBarrier*/ {
+    dst_stages: ash::vk::PipelineStageFlags,
+) /*-> ash::vk::ImageMemoryBarrier*/
+{
 
 }

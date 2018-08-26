@@ -1,9 +1,9 @@
 use ash;
 
-use super::GlobalBarrier;
-use super::BufferBarrier;
-use super::ImageBarrier;
 use super::AccessType;
+use super::BufferBarrier;
+use super::GlobalBarrier;
+use super::ImageBarrier;
 use super::ImageLayout;
 
 // Simplified wrapper around vkCmdPipelineBarrier.
@@ -15,7 +15,8 @@ pub fn pipeline_barrier(
     command_buffer: ash::vk::CommandBuffer,
     global_barrier: Option<GlobalBarrier>,
     buffer_barriers: &[BufferBarrier],
-    image_barriers: &[ImageBarrier]) {
+    image_barriers: &[ImageBarrier],
+) {
 
 }
 
@@ -25,7 +26,8 @@ pub fn pipeline_barrier(
 pub fn set_event(
     command_buffer: ash::vk::CommandBuffer,
     event: ash::vk::Event,
-    previous_accesses: &[AccessType]) {
+    previous_accesses: &[AccessType],
+) {
 
 }
 
@@ -35,7 +37,8 @@ pub fn set_event(
 pub fn reset_event(
     command_buffer: ash::vk::CommandBuffer,
     event: ash::vk::Event,
-    previous_accesses: &[AccessType]) {
+    previous_accesses: &[AccessType],
+) {
 
 }
 
@@ -50,6 +53,7 @@ pub fn wait_events(
     events: &[ash::vk::Event],
     global_barrier: Option<GlobalBarrier>,
     buffer_barriers: &[BufferBarrier],
-    image_barriers: &[ImageBarrier]) {
+    image_barriers: &[ImageBarrier],
+) {
 
 }

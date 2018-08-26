@@ -1,12 +1,10 @@
 extern crate vk_sync;
 
 #[test]
-fn test1() {
-}
+fn test1() {}
 
 #[test]
-fn test2() {
-}
+fn test2() {}
 
 #[test]
 fn it_works() {
