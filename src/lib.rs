@@ -36,7 +36,7 @@ pub enum AccessType {
     /// Read as a uniform buffer in a tessellation control shader
     TessellationControlShaderReadUniformBuffer,
 
-    /// Read as a sampled image/uniform texel buffer  in a tessellation control shader
+    /// Read as a sampled image/uniform texel buffer in a tessellation control shader
     TessellationControlShaderReadSampledImageOrUniformTexelBuffer,
 
     /// Read as any other resource in a tessellation control shader
