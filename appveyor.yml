@@ -17,14 +17,15 @@ matrix:
     - channel: nightly
 
 install:
-- ps: .\appveyor_rust_install.ps1
+  - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
+  - rustup-init -yv --default-toolchain %channel% --default-host %target%
+  - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
+  - rustc -vV
+  - cargo -vV
 
-build_script:
-- cmd: cargo build --verbose
+# 'cargo test' takes care of building for us, so disable Appveyor's build stage. This prevents
+# the "directory does not contain a project or solution file" error.
+build: off
 
 test_script:
-- cmd: cargo test --verbose
-
-branches:
-  only:
-    - master
+  - cargo test --verbose %cargoflags%
