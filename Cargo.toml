@@ -19,7 +19,6 @@ exclude = [
 [badges]
 travis-ci = { repository = "gwihlidal/vk-sync-rs" }
 appveyor = { repository = "gwihlidal/vk-sync-rs" }
-codecov = { repository = "gwihlidal/vk-sync-rs", branch = "master", service = "github" }
 maintenance = { status = "actively-developed" }
 
 [lib]
