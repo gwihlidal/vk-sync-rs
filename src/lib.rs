@@ -455,7 +455,7 @@ pub fn get_image_memory_barrier(
             }
         };
 
-        image_barrier.old_layout = layout;
+        image_barrier.new_layout = layout;
     }
 
     // Ensure that the stage masks are valid if no stages were determined
@@ -512,12 +512,12 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
         },
         AccessType::VertexShaderReadSampledImageOrUniformTexelBuffer => AccessInfo {
             stage_mask: ash::vk::PIPELINE_STAGE_VERTEX_SHADER_BIT,
-            access_mask: ash::vk::ACCESS_MEMORY_READ_BIT,
-            image_layout: ash::vk::ImageLayout::Undefined,
+            access_mask: ash::vk::ACCESS_SHADER_READ_BIT,
+            image_layout: ash::vk::ImageLayout::ShaderReadOnlyOptimal,
         },
         AccessType::VertexShaderReadOther => AccessInfo {
             stage_mask: ash::vk::PIPELINE_STAGE_VERTEX_SHADER_BIT,
-            access_mask: ash::vk::ACCESS_MEMORY_READ_BIT,
+            access_mask: ash::vk::ACCESS_SHADER_READ_BIT,
             image_layout: ash::vk::ImageLayout::General,
         },
         AccessType::TessellationControlShaderReadUniformBuffer => AccessInfo {
