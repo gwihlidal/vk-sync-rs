@@ -737,10 +737,24 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
     }
 }
 
-pub fn is_write_access(access_type: &AccessType) -> bool {
-    unimplemented!()
-}
-
-pub fn is_read_access(access_type: &AccessType) -> bool {
-    unimplemented!()
+pub(crate) fn is_write_access(access_type: &AccessType) -> bool {
+    match access_type {
+        //AccessType::CommandBufferWriteNVX => true,
+        AccessType::VertexShaderWrite => true,
+        AccessType::TessellationControlShaderWrite => true,
+        AccessType::TessellationEvaluationShaderWrite => true,
+        AccessType::GeometryShaderWrite => true,
+        AccessType::FragmentShaderWrite => true,
+        AccessType::ColorAttachmentWrite => true,
+        AccessType::DepthStencilAttachmentWrite => true,
+        //AccessType::DepthAttachmentWriteStencilReadOnly => true,
+        //AccessType::StencilAttachmentWriteDepthReadOnly => true,
+        AccessType::ComputeShaderWrite => true,
+        AccessType::AnyShaderWrite => true,
+        AccessType::TransferWrite => true,
+        AccessType::HostWrite => true,
+        AccessType::ColorAttachmentReadWrite => true,
+        AccessType::General => true,
+        _ => false,
+    }
 }
