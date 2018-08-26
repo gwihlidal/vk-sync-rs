@@ -1,11 +1,5 @@
 use ash;
-
-use super::get_access_info;
-use super::AccessType;
-use super::BufferBarrier;
-use super::GlobalBarrier;
-use super::ImageBarrier;
-use super::ImageLayout;
+use super::*;
 
 // Simplified wrapper around vkCmdPipelineBarrier.
 // The mapping functions defined above are used to translate the passed in
@@ -76,5 +70,49 @@ pub fn wait_events(
     buffer_barriers: &[BufferBarrier],
     image_barriers: &[ImageBarrier],
 ) {
+    let mut src_stage_mask = ash::vk::PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    let mut dst_stage_mask = ash::vk::PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
+    let mut vk_memory_barriers: Vec<ash::vk::MemoryBarrier> = Vec::with_capacity(1);
+    let mut vk_buffer_barriers: Vec<ash::vk::BufferMemoryBarrier> = Vec::with_capacity(buffer_barriers.len());
+    let mut vk_image_barriers: Vec<ash::vk::ImageMemoryBarrier> = Vec::with_capacity(image_barriers.len());
+
+    // Global memory barrier
+    if let Some(ref barrier) = global_barrier {
+        let (src_mask, dst_mask, barrier) = get_memory_barrier(barrier);
+        src_stage_mask |= src_mask;
+        dst_stage_mask |= dst_mask;
+        vk_memory_barriers.push(barrier);
+    }
+
+    // Buffer memory barriers
+    for buffer_barrier in buffer_barriers {
+        let (src_mask, dst_mask, barrier) = get_buffer_memory_barrier(buffer_barrier);
+        src_stage_mask |= src_mask;
+        dst_stage_mask |= dst_mask;
+        vk_buffer_barriers.push(barrier);
+    }
+
+    // Image memory barriers
+    for image_barrier in image_barriers {
+        let (src_mask, dst_mask, barrier) = get_image_memory_barrier(image_barrier);
+        src_stage_mask |= src_mask;
+        dst_stage_mask |= dst_mask;
+        vk_image_barriers.push(barrier);
+    }
+
+    unsafe {
+        device.cmd_wait_events(
+            command_buffer,
+            events.len() as u32,
+            events.as_ptr(),
+            src_stage_mask,
+            dst_stage_mask,
+            vk_memory_barriers.len() as u32,
+            vk_memory_barriers.as_ptr(),
+            vk_buffer_barriers.len() as u32,
+            vk_buffer_barriers.as_ptr(),
+            vk_image_barriers.len() as u32,
+            vk_image_barriers.as_ptr());
+    }
 }
