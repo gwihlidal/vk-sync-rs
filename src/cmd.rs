@@ -13,6 +13,7 @@ use super::get_access_info;
 // barriers to be passed to vkCmdPipelineBarrier.
 // commandBuffer is passed unmodified to vkCmdPipelineBarrier.
 pub fn pipeline_barrier(
+    device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
     global_barrier: Option<GlobalBarrier>,
     buffer_barriers: &[BufferBarrier],
@@ -45,11 +46,20 @@ pub fn set_event(
 // Resets an event when the accesses defined by pPrevAccesses are completed.
 // command_buffer and event are passed unmodified to vkCmdResetEvent.
 pub fn reset_event(
+    device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
     event: ash::vk::Event,
     previous_accesses: &[AccessType],
 ) {
+    let mut stage_mask = ash::vk::PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    for previous_access in previous_accesses {
+        let previous_info = get_access_info(previous_access);
+        stage_mask |= previous_info.stage_mask;
+    }
 
+    unsafe {
+        device.cmd_reset_event(command_buffer, event, stage_mask);
+    }
 }
 
 // Simplified wrapper around vkCmdWaitEvents.
@@ -59,6 +69,7 @@ pub fn reset_event(
 // commandBuffer, eventCount, and pEvents are passed unmodified to
 // vkCmdWaitEvents.
 pub fn wait_events(
+    device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
     events: &[ash::vk::Event],
     global_barrier: Option<GlobalBarrier>,
