@@ -1,11 +1,11 @@
 use ash;
 
+use super::get_access_info;
 use super::AccessType;
 use super::BufferBarrier;
 use super::GlobalBarrier;
 use super::ImageBarrier;
 use super::ImageLayout;
-use super::get_access_info;
 
 // Simplified wrapper around vkCmdPipelineBarrier.
 // The mapping functions defined above are used to translate the passed in
