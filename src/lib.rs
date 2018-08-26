@@ -284,7 +284,7 @@ pub(crate) struct AccessInfo {
     pub(crate) image_layout: ash::vk::ImageLayout,
 }
 
-pub(crate) fn get_access_info(access_type: AccessType) -> AccessInfo {     
+pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {     
     match access_type {
         Nothing => {
             AccessInfo {
