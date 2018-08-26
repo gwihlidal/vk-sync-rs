@@ -62,12 +62,12 @@ pub fn reset_event(
     }
 }
 
-// Simplified wrapper around vkCmdWaitEvents.
-// The mapping functions defined above are used to translate the passed in
-// barrier definitions into a set of pipeline stages and native Vulkan memory
-// barriers to be passed to vkCmdPipelineBarrier.
-// commandBuffer, eventCount, and pEvents are passed unmodified to
-// vkCmdWaitEvents.
+/// Simplified wrapper around `vkCmdWaitEvents`.
+/// The mapping functions defined above are used to translate the passed in
+/// barrier definitions into a set of pipeline stages and native Vulkan memory
+/// barriers to be passed to `vkCmdPipelineBarrier`.
+/// 
+/// `commandBuffer`, `eventCount`, and `events` are passed unmodified to `vkCmdWaitEvents`.
 pub fn wait_events(
     device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,

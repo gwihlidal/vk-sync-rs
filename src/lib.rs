@@ -12,7 +12,7 @@ pub enum AccessType {
     /// No access. Useful primarily for initialization
     Nothing,
 
-    /// Command buffer read operation as defined by NVX_device_generated_commands
+    /// Command buffer read operation as defined by `NVX_device_generated_commands`
     CommandBufferReadNVX,
 
     /// Read as an indirect buffer for drawing or dispatch
@@ -108,10 +108,10 @@ pub enum AccessType {
     /// Read on the host
     HostRead,
 
-    /// Read by the presentation engine (i.e. vkQueuePresentKHR)
+    /// Read by the presentation engine (i.e. `vkQueuePresentKHR`)
     Present,
 
-    /// Command buffer write operation as defined by NVX_device_generated_commands
+    /// Command buffer write operation as defined by `NVX_device_generated_commands`
     CommandBufferWriteNVX,
 
     /// Written as any resource in a vertex shader
@@ -135,10 +135,12 @@ pub enum AccessType {
     /// Written as a depth/stencil attachment during rendering, or via a subpass store op
     DepthStencilAttachmentWrite,
 
-    /// Written as a depth aspect of a depth/stencil attachment during rendering, whilst the stencil aspect is read-only. Requires VK_KHR_maintenance2 to be enabled.
+    /// Written as a depth aspect of a depth/stencil attachment during rendering, whilst the
+    /// stencil aspect is read-only. Requires `VK_KHR_maintenance2` to be enabled.
     DepthAttachmentWriteStencilReadOnly,
 
-    /// Written as a stencil aspect of a depth/stencil attachment during rendering, whilst the depth aspect is read-only. Requires VK_KHR_maintenance2 to be enabled.
+    /// Written as a stencil aspect of a depth/stencil attachment during rendering, whilst the
+    /// depth aspect is read-only. Requires `VK_KHR_maintenance2` to be enabled.
     StencilAttachmentWriteDepthReadOnly,
 
     /// Written as any resource in a compute shader
@@ -166,39 +168,43 @@ pub enum AccessType {
 /// `Optimal` is usually preferred.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ImageLayout {
-    // Choose the most optimal layout for each usage. Performs layout transitions as appropriate for the access.
+    /// Choose the most optimal layout for each usage. Performs layout transitions as appropriate for the access.
     Optimal,
 
-    // Layout accessible by all Vulkan access types on a device - no layout transitions except for presentation
+    /// Layout accessible by all Vulkan access types on a device - no layout transitions except for presentation
     General,
 
-    // As `General`, but also allows presentation engines to access it - no layout transitions. // Requires VK_KHR_shared_presentable_image to be enabled. Can only be used for shared presentable images (i.e. single-buffered swap chains).
+    /// As `General`, but also allows presentation engines to access it - no layout transitions.
+    /// Requires VK_KHR_shared_presentable_image to be enabled, and this can only be used for shared presentable
+    /// images (i.e. single-buffered swap chains).
     GeneralAndPresentation,
 }
 
-// Global barriers define a set of accesses on multiple resources at once.
-// If a buffer or image doesn't require a queue ownership transfer, or an image
-// doesn't require a layout transition (e.g. you're using one of the `General`
-// layouts) then a global barrier should be preferred.
-// Simply define the previous and next access types of resources affected.
+/// Global barriers define a set of accesses on multiple resources at once.
+/// If a buffer or image doesn't require a queue ownership transfer, or an image
+/// doesn't require a layout transition (e.g. you're using one of the
+/// `ImageLayout::General*` layouts) then a global barrier should be preferred.
+///
+/// Simply define the previous and next access types of resources affected.
 pub struct GlobalBarrier {
     pub previous_accesses: Vec<AccessType>,
     pub next_accesses: Vec<AccessType>,
 }
 
-/*
-Buffer barriers should only be used when a queue family ownership transfer
-is required - prefer global barriers at all other times.
-Access types are defined in the same way as for a global memory barrier, but
-they only affect the buffer range identified by buffer, offset and size,
-rather than all resources.
-srcQueueFamilyIndex and dstQueueFamilyIndex will be passed unmodified into a
-VkBufferMemoryBarrier.
-A buffer barrier defining a queue ownership transfer needs to be executed
-twice - once by a queue in the source queue family, and then once again by a
-queue in the destination queue family, with a semaphore guaranteeing
-execution order between them.
-*/
+/// Buffer barriers should only be used when a queue family ownership transfer
+/// is required - prefer global barriers at all other times.
+///
+/// Access types are defined in the same way as for a global memory barrier, but
+/// they only affect the buffer range identified by `buffer`, `offset` and `size`,
+/// rather than all resources.
+///
+/// `src_queue_family_index` and `dst_queue_family_index` will be passed unmodified
+/// into a buffer memory barrier.
+///
+/// A buffer barrier defining a queue ownership transfer needs to be executed
+/// twice - once by a queue in the source queue family, and then once again by a
+/// queue in the destination queue family, with a semaphore guaranteeing
+/// execution order between them.
 pub struct BufferBarrier {
     pub previous_accesses: Vec<AccessType>,
     pub next_accesses: Vec<AccessType>,
@@ -209,29 +215,32 @@ pub struct BufferBarrier {
     pub size: usize,
 }
 
-/*
-Image barriers should only be used when a queue family ownership transfer
-or an image layout transition is required - prefer global barriers at all
-other times.
-In general it is better to use image barriers with THSVS_IMAGE_LAYOUT_OPTIMAL
-than it is to use global barriers with images using either of the
-THSVS_IMAGE_LAYOUT_GENERAL* layouts.
-Access types are defined in the same way as for a global memory barrier, but
-they only affect the image subresource range identified by image and
-subresourceRange, rather than all resources.
-srcQueueFamilyIndex, dstQueueFamilyIndex, image, and subresourceRange will
-be passed unmodified into a VkImageMemoryBarrier.
-An image barrier defining a queue ownership transfer needs to be executed
-twice - once by a queue in the source queue family, and then once again by a
-queue in the destination queue family, with a semaphore guaranteeing
-execution order between them.
-If discardContents is set to true, the contents of the image become
-undefined after the barrier is executed, which can result in a performance
-boost over attempting to preserve the contents.
-This is particularly useful for transient images where the contents are
-going to be immediately overwritten. A good example of when to use this is
-when an application re-uses a presented image after vkAcquireNextImageKHR.
-*/
+/// Image barriers should only be used when a queue family ownership transfer
+/// or an image layout transition is required - prefer global barriers at all
+/// other times.
+///
+/// In general it is better to use image barriers with `ImageLayout::Optimal`
+/// than it is to use global barriers with images using either of the
+/// `ImageLayout::General*` layouts.
+///
+/// Access types are defined in the same way as for a global memory barrier, but
+/// they only affect the image subresource range identified by `image` and
+/// `range`, rather than all resources.
+///
+/// `src_queue_family_index`, `dst_queue_family_index`, `image`, and `range` will
+/// be passed unmodified into an image memory barrier.
+///
+/// An image barrier defining a queue ownership transfer needs to be executed
+/// twice - once by a queue in the source queue family, and then once again by a
+/// queue in the destination queue family, with a semaphore guaranteeing
+/// execution order between them.
+///
+/// If `discard_contents` is set to true, the contents of the image become
+/// undefined after the barrier is executed, which can result in a performance
+/// boost over attempting to preserve the contents. This is particularly useful
+/// for transient images where the contents are going to be immediately overwritten.
+/// A good example of when to use this is when an application re-uses a presented
+/// image after acquiring the next swap chain image.
 pub struct ImageBarrier {
     pub previous_accesses: Vec<AccessType>,
     pub next_accesses: Vec<AccessType>,
@@ -244,9 +253,9 @@ pub struct ImageBarrier {
     pub range: ImageSubresourceRangeType,
 }
 
-// Mapping function that translates a global barrier into a set of source and
-// destination pipeline stages, and a VkMemoryBarrier, that can be used with
-// Vulkan's synchronization methods.
+/// Mapping function that translates a global barrier into a set of source and
+/// destination pipeline stages, and a memory barrier, that can be used with
+/// Vulkan synchronization methods.
 pub fn get_memory_barrier(
     barrier: &GlobalBarrier,
 ) -> (
@@ -300,9 +309,9 @@ pub fn get_memory_barrier(
     (src_stages, dst_stages, memory_barrier)
 }
 
-// Mapping function that translates a buffer barrier into a set of source and
-// destination pipeline stages, and a VkBufferMemoryBarrier, that can be used
-// with Vulkan's synchronization methods.
+/// Mapping function that translates a buffer barrier into a set of source and
+/// destination pipeline stages, and a buffer memory barrier, that can be used
+/// with Vulkan synchronization methods.
 pub fn get_buffer_memory_barrier(
     barrier: &BufferBarrier,
 ) -> (
@@ -361,9 +370,9 @@ pub fn get_buffer_memory_barrier(
     (src_stages, dst_stages, buffer_barrier)
 }
 
-// Mapping function that translates an image barrier into a set of source and
-// destination pipeline stages, and a VkBufferMemoryBarrier, that can be used
-// with Vulkan's synchronization methods.
+/// Mapping function that translates an image barrier into a set of source and
+/// destination pipeline stages, and an image memory barrier, that can be used
+/// with Vulkan synchronization methods.
 pub fn get_image_memory_barrier(
     barrier: &ImageBarrier,
 ) -> (
@@ -411,7 +420,7 @@ pub fn get_image_memory_barrier(
                 ImageLayout::Optimal => previous_info.image_layout,
                 ImageLayout::GeneralAndPresentation => {
                     unimplemented!()
-                    //layout = ash::vk::ImageLayout::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR
+                    // TODO: layout = ash::vk::ImageLayout::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR
                 }
             };
 
@@ -442,7 +451,7 @@ pub fn get_image_memory_barrier(
             ImageLayout::Optimal => next_info.image_layout,
             ImageLayout::GeneralAndPresentation => {
                 unimplemented!()
-                //layout = ash::vk::ImageLayout::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR
+                // TODO: layout = ash::vk::ImageLayout::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR
             }
         };
 
@@ -474,7 +483,7 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
             access_mask: ash::vk::AccessFlags::empty(),
             image_layout: ash::vk::ImageLayout::Undefined,
         },
-        /*CommandBufferReadNVX => {
+        /* TODO: CommandBufferReadNVX => {
             AccessInfo {
                 stage_mask: ash::vk::PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX,
                 access_mask: ash::vk::ACCESS_COMMAND_PROCESS_READ_BIT_NVX,
@@ -645,7 +654,7 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
             access_mask: ash::vk::AccessFlags::empty(),
             image_layout: ash::vk::ImageLayout::PresentSrcKhr,
         },
-        /*AccessType::CommandBufferWriteNVX => {
+        /* TODO: AccessType::CommandBufferWriteNVX => {
             AccessInfo {
                 stage_mask: ash::vk::PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX,
                 access_mask: ash::vk::ACCESS_COMMAND_PROCESS_WRITE_BIT_NVX,
@@ -688,14 +697,14 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
             access_mask: ash::vk::ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
             image_layout: ash::vk::ImageLayout::DepthStencilAttachmentOptimal,
         },
-        /*AccessType::DepthAttachmentWriteStencilReadOnly => {
+        /* TODO: AccessType::DepthAttachmentWriteStencilReadOnly => {
             AccessInfo {
                 stage_mask: ash::vk::PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | ash::vk::PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
                 access_mask: ash::vk::ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | ash::vk::ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
                 image_layout: ash::vk::ImageLayout::IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL_KHR,
             }
         }*/
-        /*AccessType::StencilAttachmentWriteDepthReadOnly => {
+        /* TODO: AccessType::StencilAttachmentWriteDepthReadOnly => {
             AccessInfo {
                 stage_mask: ash::vk::PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | ash::vk::PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
                 access_mask: ash::vk::ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | ash::vk::ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
@@ -739,7 +748,7 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 
 pub(crate) fn is_write_access(access_type: &AccessType) -> bool {
     match access_type {
-        //AccessType::CommandBufferWriteNVX => true,
+        // TODO: AccessType::CommandBufferWriteNVX => true,
         AccessType::VertexShaderWrite => true,
         AccessType::TessellationControlShaderWrite => true,
         AccessType::TessellationEvaluationShaderWrite => true,
@@ -747,8 +756,8 @@ pub(crate) fn is_write_access(access_type: &AccessType) -> bool {
         AccessType::FragmentShaderWrite => true,
         AccessType::ColorAttachmentWrite => true,
         AccessType::DepthStencilAttachmentWrite => true,
-        //AccessType::DepthAttachmentWriteStencilReadOnly => true,
-        //AccessType::StencilAttachmentWriteDepthReadOnly => true,
+        // TODO: AccessType::DepthAttachmentWriteStencilReadOnly => true,
+        // TODO: AccessType::StencilAttachmentWriteDepthReadOnly => true,
         AccessType::ComputeShaderWrite => true,
         AccessType::AnyShaderWrite => true,
         AccessType::TransferWrite => true,
