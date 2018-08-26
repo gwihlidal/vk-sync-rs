@@ -7,6 +7,7 @@ pub type ImageSubresourceRangeType = ash::vk::ImageSubresourceRange;
 pub mod cmd;
 
 /// Defines all potential resource usages
+#[derive(Debug, Clone, PartialEq)]
 pub enum AccessType {
     /// No access. Useful primarily for initialization
     Nothing,
@@ -163,6 +164,7 @@ pub enum AccessType {
 /// Rather than a list of all possible image layouts, this reduced list is
 /// correlated with the access types to map to the correct Vulkan layouts.
 /// `Optimal` is usually preferred.
+#[derive(Debug, Clone, PartialEq)]
 pub enum ImageLayout {
     // Choose the most optimal layout for each usage. Performs layout transitions as appropriate for the access.
     Optimal,
@@ -273,9 +275,100 @@ pub fn get_image_memory_barrier(
     barrier: &ImageBarrier,
     src_stages: ash::vk::PipelineStageFlags,
     dst_stages: ash::vk::PipelineStageFlags,
-) /*-> ash::vk::ImageMemoryBarrier*/
+) -> (ash::vk::PipelineStageFlags, ash::vk::PipelineStageFlags, ash::vk::ImageMemoryBarrier)
 {
+    let mut src_stages = ash::vk::PipelineStageFlags::empty();
+    let mut dst_stages = ash::vk::PipelineStageFlags::empty();
 
+    let mut image_barrier = ash::vk::ImageMemoryBarrier {
+        s_type: ash::vk::StructureType::ImageMemoryBarrier,
+        p_next: ::std::ptr::null(),
+        src_access_mask: Default::default(),
+        dst_access_mask: Default::default(),
+        old_layout: ash::vk::ImageLayout::Undefined,
+        new_layout: ash::vk::ImageLayout::Undefined,
+        src_queue_family_index: barrier.src_queue_family_index,
+        dst_queue_family_index: barrier.dst_queue_family_index,
+        image: barrier.image,
+        subresource_range: barrier.range.clone(),
+    };
+
+    for previous_access in &barrier.previous_accesses {
+        let previous_info = get_access_info(previous_access);
+
+        src_stages |= previous_info.stage_mask;
+
+        // Add appropriate availability operations - for writes only.
+        if is_write_access(previous_access) {
+            image_barrier.src_access_mask |= previous_info.access_mask;
+        }
+
+        if barrier.discard_contents {
+            image_barrier.old_layout = ash::vk::ImageLayout::Undefined;
+        } else {
+            let layout = match barrier.previous_layout {
+                ImageLayout::General => {
+                    if *previous_access == AccessType::Present {
+                        ash::vk::ImageLayout::PresentSrcKhr
+                    } else {
+                        ash::vk::ImageLayout::General
+                    }
+                },
+                ImageLayout::Optimal => {
+                    previous_info.image_layout
+                },
+                ImageLayout::GeneralAndPresentation => {
+                    unimplemented!()
+                    //layout = ash::vk::ImageLayout::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR
+                }
+            };
+
+            image_barrier.old_layout = layout;
+        }
+    }
+
+    for next_access in &barrier.next_accesses {
+        let next_info = get_access_info(next_access);
+
+        dst_stages |= next_info.stage_mask;
+
+        // Add visibility operations as necessary.
+        // If the src access mask, this is a WAR hazard (or for some reason a "RAR"),
+        // so the dst access mask can be safely zeroed as these don't need visibility.
+        if image_barrier.src_access_mask != ash::vk::AccessFlags::empty() {
+            image_barrier.dst_access_mask |= next_info.access_mask;
+        }
+
+        let layout = match barrier.next_layout {
+            ImageLayout::General => {
+                if *next_access == AccessType::Present {
+                    ash::vk::ImageLayout::PresentSrcKhr
+                } else {
+                    ash::vk::ImageLayout::General
+                }
+            },
+            ImageLayout::Optimal => {
+                next_info.image_layout
+            },
+            ImageLayout::GeneralAndPresentation => {
+                unimplemented!()
+                //layout = ash::vk::ImageLayout::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR
+            }
+        };
+
+        image_barrier.old_layout = layout;
+    }
+
+    // Ensure that the stage masks are valid if no stages were determined
+    if src_stages == ash::vk::PipelineStageFlags::empty() {
+        src_stages = ash::vk::PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    }
+
+    if dst_stages == ash::vk::PipelineStageFlags::empty() {
+        dst_stages = ash::vk::PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    }
+
+    (src_stages, dst_stages, image_barrier)
 }
 
 pub(crate) struct AccessInfo {
@@ -642,3 +735,10 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
     }
 }
 
+pub fn is_write_access(access_type: &AccessType) -> bool {
+    true
+}
+
+pub fn is_read_access(access_type: &AccessType) -> bool {
+    true
+}
