@@ -1,11 +1,11 @@
-use ash;
 use super::*;
+use ash;
 
-// Simplified wrapper around vkCmdPipelineBarrier.
-// The mapping functions defined above are used to translate the passed in
-// barrier definitions into a set of pipeline stages and native Vulkan memory
-// barriers to be passed to vkCmdPipelineBarrier.
-// commandBuffer is passed unmodified to vkCmdPipelineBarrier.
+/// Simplified wrapper around `vkCmdPipelineBarrier`.
+/// The mapping functions defined above are used to translate the passed in
+/// barrier definitions into a set of pipeline stages and native Vulkan memory
+/// barriers to be passed to `vkCmdPipelineBarrier`.
+/// `command_buffer` is passed unmodified to `vkCmdPipelineBarrier`.
 pub fn pipeline_barrier(
     device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
@@ -16,9 +16,9 @@ pub fn pipeline_barrier(
 
 }
 
-// Wrapper around vkCmdSetEvent.
-// Sets an event when the accesses defined by pPrevAccesses are completed.
-// commandBuffer and event are passed unmodified to vkCmdSetEvent.
+/// Wrapper around `vkCmdSetEvent`.
+/// Sets an event when the accesses defined by `previous_accesses` are completed.
+/// `command_buffer` and `event` are passed unmodified to `vkCmdSetEvent`.
 pub fn set_event(
     device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
@@ -36,9 +36,9 @@ pub fn set_event(
     }
 }
 
-// Wrapper around vkCmdResetEvent.
-// Resets an event when the accesses defined by pPrevAccesses are completed.
-// command_buffer and event are passed unmodified to vkCmdResetEvent.
+/// Wrapper around `vkCmdResetEvent`.
+/// Resets an event when the accesses defined by `previous_accesses` are completed.
+/// `command_buffer` and `event` are passed unmodified to `vkCmdResetEvent`.
 pub fn reset_event(
     device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
@@ -61,7 +61,7 @@ pub fn reset_event(
 /// barrier definitions into a set of pipeline stages and native Vulkan memory
 /// barriers to be passed to `vkCmdPipelineBarrier`.
 /// 
-/// `commandBuffer`, `eventCount`, and `events` are passed unmodified to `vkCmdWaitEvents`.
+/// `commandBuffer` and `events` are passed unmodified to `vkCmdWaitEvents`.
 pub fn wait_events(
     device: ash::vk::cmds::DeviceFnV1_0,
     command_buffer: ash::vk::CommandBuffer,
@@ -74,8 +74,10 @@ pub fn wait_events(
     let mut dst_stage_mask = ash::vk::PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
     let mut vk_memory_barriers: Vec<ash::vk::MemoryBarrier> = Vec::with_capacity(1);
-    let mut vk_buffer_barriers: Vec<ash::vk::BufferMemoryBarrier> = Vec::with_capacity(buffer_barriers.len());
-    let mut vk_image_barriers: Vec<ash::vk::ImageMemoryBarrier> = Vec::with_capacity(image_barriers.len());
+    let mut vk_buffer_barriers: Vec<ash::vk::BufferMemoryBarrier> =
+        Vec::with_capacity(buffer_barriers.len());
+    let mut vk_image_barriers: Vec<ash::vk::ImageMemoryBarrier> =
+        Vec::with_capacity(image_barriers.len());
 
     // Global memory barrier
     if let Some(ref barrier) = global_barrier {
@@ -113,6 +115,7 @@ pub fn wait_events(
             vk_buffer_barriers.len() as u32,
             vk_buffer_barriers.as_ptr(),
             vk_image_barriers.len() as u32,
-            vk_image_barriers.as_ptr());
+            vk_image_barriers.as_ptr(),
+        );
     }
 }
