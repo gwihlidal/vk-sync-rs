@@ -1,3 +1,18 @@
+//! In an effort to make Vulkan synchronization more accessible, this library
+//! provides a simplification of core synchronization mechanisms such as
+//! pipeline barriers and events.
+//! 
+//! Rather than the complex maze of enums and bit flags in Vulkan - many
+//! combinations of which are invalid or nonsensical - this library collapses
+//! this to a much shorter list of ~40 distinct usage types, and a couple of
+//! options for handling image layouts.
+//! 
+//! Additionally, these usage types provide an easier mapping to other graphics
+//! APIs like DirectX 12.
+//! 
+//! Use of other synchronization mechanisms such as semaphores, fences and render
+//! passes are not addressed in this library at present.
+
 extern crate ash;
 
 pub type BufferType = ash::vk::Buffer;
@@ -174,8 +189,8 @@ pub enum ImageLayout {
     /// Layout accessible by all Vulkan access types on a device - no layout transitions except for presentation
     General,
 
-    /// As `General`, but also allows presentation engines to access it - no layout transitions.
-    /// Requires VK_KHR_shared_presentable_image to be enabled, and this can only be used for shared presentable
+    /// Similar to `General`, but also allows presentation engines to access it - no layout transitions.
+    /// Requires `VK_KHR_shared_presentable_image` to be enabled, and this can only be used for shared presentable
     /// images (i.e. single-buffered swap chains).
     GeneralAndPresentation,
 }
