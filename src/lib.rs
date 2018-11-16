@@ -405,7 +405,7 @@ pub fn get_image_memory_barrier(
 		src_queue_family_index: barrier.src_queue_family_index,
 		dst_queue_family_index: barrier.dst_queue_family_index,
 		image: barrier.image,
-		subresource_range: barrier.range.clone(),
+		subresource_range: barrier.range,
 		.. Default::default()
 	};
 
