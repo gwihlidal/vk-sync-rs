@@ -3,7 +3,9 @@
 ## 0.1.2 (2018-11-17)
 
 * Updated to ash 0.26
+* Use default struct init from ash
 * Made function pointer structs borrowed for performance
+* Some minor cleanup
 
 ## 0.1.1 (2018-11-15)
 
