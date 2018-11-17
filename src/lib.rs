@@ -178,7 +178,9 @@ pub enum AccessType {
 }
 
 impl Default for AccessType {
-    fn default() -> Self { AccessType::Nothing }
+	fn default() -> Self {
+		AccessType::Nothing
+	}
 }
 
 /// Defines a handful of layout options for images.
@@ -200,7 +202,9 @@ pub enum ImageLayout {
 }
 
 impl Default for ImageLayout {
-    fn default() -> Self { ImageLayout::Optimal }
+	fn default() -> Self {
+		ImageLayout::Optimal
+	}
 }
 
 /// Global barriers define a set of accesses on multiple resources at once.
@@ -292,12 +296,7 @@ pub fn get_memory_barrier(
 	let mut src_stages = ash::vk::PipelineStageFlags::empty();
 	let mut dst_stages = ash::vk::PipelineStageFlags::empty();
 
-	let mut memory_barrier = ash::vk::MemoryBarrier {
-		s_type: ash::vk::StructureType::MEMORY_BARRIER,
-		p_next: ::std::ptr::null(),
-		src_access_mask: Default::default(),
-		dst_access_mask: Default::default(),
-	};
+	let mut memory_barrier = ash::vk::MemoryBarrier::default();
 
 	for previous_access in &barrier.previous_accesses {
 		let previous_info = get_access_info(previous_access);
@@ -349,15 +348,12 @@ pub fn get_buffer_memory_barrier(
 	let mut dst_stages = ash::vk::PipelineStageFlags::empty();
 
 	let mut buffer_barrier = ash::vk::BufferMemoryBarrier {
-		s_type: ash::vk::StructureType::BUFFER_MEMORY_BARRIER,
-		p_next: ::std::ptr::null(),
-		src_access_mask: Default::default(),
-		dst_access_mask: Default::default(),
 		src_queue_family_index: barrier.src_queue_family_index,
 		dst_queue_family_index: barrier.dst_queue_family_index,
 		buffer: barrier.buffer,
 		offset: barrier.offset as u64,
 		size: barrier.size as u64,
+		..Default::default()
 	};
 
 	for previous_access in &barrier.previous_accesses {
@@ -410,16 +406,11 @@ pub fn get_image_memory_barrier(
 	let mut dst_stages = ash::vk::PipelineStageFlags::empty();
 
 	let mut image_barrier = ash::vk::ImageMemoryBarrier {
-		s_type: ash::vk::StructureType::IMAGE_MEMORY_BARRIER,
-		p_next: ::std::ptr::null(),
-		src_access_mask: Default::default(),
-		dst_access_mask: Default::default(),
-		old_layout: ash::vk::ImageLayout::UNDEFINED,
-		new_layout: ash::vk::ImageLayout::UNDEFINED,
 		src_queue_family_index: barrier.src_queue_family_index,
 		dst_queue_family_index: barrier.dst_queue_family_index,
 		image: barrier.image,
-		subresource_range: barrier.range.clone(),
+		subresource_range: barrier.range,
+		..Default::default()
 	};
 
 	for previous_access in &barrier.previous_accesses {
@@ -509,13 +500,11 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 			access_mask: ash::vk::AccessFlags::empty(),
 			image_layout: ash::vk::ImageLayout::UNDEFINED,
 		},
-		AccessType::CommandBufferReadNVX => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
-                access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_READ_NVX,
-                image_layout: ash::vk::ImageLayout::UNDEFINED,
-            }
-        },
+		AccessType::CommandBufferReadNVX => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
+			access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_READ_NVX,
+			image_layout: ash::vk::ImageLayout::UNDEFINED,
+		},
 		AccessType::IndirectBuffer => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::DRAW_INDIRECT,
 			access_mask: ash::vk::AccessFlags::INDIRECT_COMMAND_READ,
@@ -680,13 +669,11 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 			access_mask: ash::vk::AccessFlags::empty(),
 			image_layout: ash::vk::ImageLayout::PRESENT_SRC_KHR,
 		},
-		AccessType::CommandBufferWriteNVX => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
-                access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_WRITE_NVX,
-                image_layout: ash::vk::ImageLayout::UNDEFINED,
-            }
-        }
+		AccessType::CommandBufferWriteNVX => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
+			access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_WRITE_NVX,
+			image_layout: ash::vk::ImageLayout::UNDEFINED,
+		},
 		AccessType::VertexShaderWrite => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::VERTEX_SHADER,
 			access_mask: ash::vk::AccessFlags::SHADER_WRITE,
@@ -723,20 +710,20 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 			access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE,
 			image_layout: ash::vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		},
-		AccessType::DepthAttachmentWriteStencilReadOnly => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
-                access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE | ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
-                image_layout: ash::vk::ImageLayout::DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
-            }
-        }
-        AccessType::StencilAttachmentWriteDepthReadOnly => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
-                access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE | ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
-                image_layout: ash::vk::ImageLayout::DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL,
-            }
-        }
+		AccessType::DepthAttachmentWriteStencilReadOnly => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
+				| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
+			access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+				| ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
+			image_layout: ash::vk::ImageLayout::DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
+		},
+		AccessType::StencilAttachmentWriteDepthReadOnly => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
+				| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
+			access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+				| ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
+			image_layout: ash::vk::ImageLayout::DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL,
+		},
 		AccessType::ComputeShaderWrite => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::COMPUTE_SHADER,
 			access_mask: ash::vk::AccessFlags::SHADER_WRITE,
