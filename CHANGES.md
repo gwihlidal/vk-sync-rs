@@ -1,5 +1,10 @@
 # Changes
 
+## 0.1.2 (2018-11-17)
+
+* Updated to ash 0.26
+* Made function pointer structs borrowed for performance
+
 ## 0.1.1 (2018-11-15)
 
 * Updated to ash 0.25 (Vulkan 1.1)

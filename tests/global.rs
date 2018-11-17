@@ -98,7 +98,10 @@ fn transfer_write_graphics_read_vertex() {
 
 	assert_eq!(src_mask, ash::vk::PipelineStageFlags::TRANSFER);
 	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::VERTEX_INPUT);
-	assert_eq!(barrier.src_access_mask, ash::vk::AccessFlags::TRANSFER_WRITE);
+	assert_eq!(
+		barrier.src_access_mask,
+		ash::vk::AccessFlags::TRANSFER_WRITE
+	);
 	assert_eq!(
 		barrier.dst_access_mask,
 		ash::vk::AccessFlags::VERTEX_ATTRIBUTE_READ

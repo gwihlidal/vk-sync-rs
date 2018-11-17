@@ -178,7 +178,9 @@ pub enum AccessType {
 }
 
 impl Default for AccessType {
-    fn default() -> Self { AccessType::Nothing }
+	fn default() -> Self {
+		AccessType::Nothing
+	}
 }
 
 /// Defines a handful of layout options for images.
@@ -200,7 +202,9 @@ pub enum ImageLayout {
 }
 
 impl Default for ImageLayout {
-    fn default() -> Self { ImageLayout::Optimal }
+	fn default() -> Self {
+		ImageLayout::Optimal
+	}
 }
 
 /// Global barriers define a set of accesses on multiple resources at once.
@@ -509,13 +513,11 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 			access_mask: ash::vk::AccessFlags::empty(),
 			image_layout: ash::vk::ImageLayout::UNDEFINED,
 		},
-		AccessType::CommandBufferReadNVX => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
-                access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_READ_NVX,
-                image_layout: ash::vk::ImageLayout::UNDEFINED,
-            }
-        },
+		AccessType::CommandBufferReadNVX => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
+			access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_READ_NVX,
+			image_layout: ash::vk::ImageLayout::UNDEFINED,
+		},
 		AccessType::IndirectBuffer => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::DRAW_INDIRECT,
 			access_mask: ash::vk::AccessFlags::INDIRECT_COMMAND_READ,
@@ -680,13 +682,11 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 			access_mask: ash::vk::AccessFlags::empty(),
 			image_layout: ash::vk::ImageLayout::PRESENT_SRC_KHR,
 		},
-		AccessType::CommandBufferWriteNVX => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
-                access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_WRITE_NVX,
-                image_layout: ash::vk::ImageLayout::UNDEFINED,
-            }
-        }
+		AccessType::CommandBufferWriteNVX => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
+			access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_WRITE_NVX,
+			image_layout: ash::vk::ImageLayout::UNDEFINED,
+		},
 		AccessType::VertexShaderWrite => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::VERTEX_SHADER,
 			access_mask: ash::vk::AccessFlags::SHADER_WRITE,
@@ -723,20 +723,20 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 			access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE,
 			image_layout: ash::vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		},
-		AccessType::DepthAttachmentWriteStencilReadOnly => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
-                access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE | ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
-                image_layout: ash::vk::ImageLayout::DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
-            }
-        }
-        AccessType::StencilAttachmentWriteDepthReadOnly => {
-            AccessInfo {
-                stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
-                access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE | ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
-                image_layout: ash::vk::ImageLayout::DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL,
-            }
-        }
+		AccessType::DepthAttachmentWriteStencilReadOnly => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
+				| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
+			access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+				| ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
+			image_layout: ash::vk::ImageLayout::DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
+		},
+		AccessType::StencilAttachmentWriteDepthReadOnly => AccessInfo {
+			stage_mask: ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
+				| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS,
+			access_mask: ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+				| ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ,
+			image_layout: ash::vk::ImageLayout::DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL,
+		},
 		AccessType::ComputeShaderWrite => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::COMPUTE_SHADER,
 			access_mask: ash::vk::AccessFlags::SHADER_WRITE,

@@ -422,9 +422,15 @@ fn transfer_write_image_fragment_read_sampled() {
 
 	assert_eq!(src_mask, ash::vk::PipelineStageFlags::TRANSFER);
 	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
-	assert_eq!(barrier.src_access_mask, ash::vk::AccessFlags::TRANSFER_WRITE);
+	assert_eq!(
+		barrier.src_access_mask,
+		ash::vk::AccessFlags::TRANSFER_WRITE
+	);
 	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
-	assert_eq!(barrier.old_layout, ash::vk::ImageLayout::TRANSFER_DST_OPTIMAL);
+	assert_eq!(
+		barrier.old_layout,
+		ash::vk::ImageLayout::TRANSFER_DST_OPTIMAL
+	);
 	assert_eq!(
 		barrier.new_layout,
 		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
