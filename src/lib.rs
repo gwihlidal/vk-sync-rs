@@ -299,18 +299,18 @@ pub fn get_memory_barrier(
 	let mut memory_barrier = ash::vk::MemoryBarrier::default();
 
 	for previous_access in &barrier.previous_accesses {
-		let previous_info = get_access_info(previous_access);
+		let previous_info = get_access_info(*previous_access);
 
 		src_stages |= previous_info.stage_mask;
 
 		// Add appropriate availability operations - for writes only.
-		if is_write_access(previous_access) {
+		if is_write_access(*previous_access) {
 			memory_barrier.src_access_mask |= previous_info.access_mask;
 		}
 	}
 
 	for next_access in &barrier.next_accesses {
-		let next_info = get_access_info(next_access);
+		let next_info = get_access_info(*next_access);
 
 		dst_stages |= next_info.stage_mask;
 
@@ -357,18 +357,18 @@ pub fn get_buffer_memory_barrier(
 	};
 
 	for previous_access in &barrier.previous_accesses {
-		let previous_info = get_access_info(previous_access);
+		let previous_info = get_access_info(*previous_access);
 
 		src_stages |= previous_info.stage_mask;
 
 		// Add appropriate availability operations - for writes only.
-		if is_write_access(previous_access) {
+		if is_write_access(*previous_access) {
 			buffer_barrier.src_access_mask |= previous_info.access_mask;
 		}
 	}
 
 	for next_access in &barrier.next_accesses {
-		let next_info = get_access_info(next_access);
+		let next_info = get_access_info(*next_access);
 
 		dst_stages |= next_info.stage_mask;
 
@@ -414,12 +414,12 @@ pub fn get_image_memory_barrier(
 	};
 
 	for previous_access in &barrier.previous_accesses {
-		let previous_info = get_access_info(previous_access);
+		let previous_info = get_access_info(*previous_access);
 
 		src_stages |= previous_info.stage_mask;
 
 		// Add appropriate availability operations - for writes only.
-		if is_write_access(previous_access) {
+		if is_write_access(*previous_access) {
 			image_barrier.src_access_mask |= previous_info.access_mask;
 		}
 
@@ -446,7 +446,7 @@ pub fn get_image_memory_barrier(
 	}
 
 	for next_access in &barrier.next_accesses {
-		let next_info = get_access_info(next_access);
+		let next_info = get_access_info(*next_access);
 
 		dst_stages |= next_info.stage_mask;
 
@@ -493,7 +493,7 @@ pub(crate) struct AccessInfo {
 	pub(crate) image_layout: ash::vk::ImageLayout,
 }
 
-pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
+pub(crate) fn get_access_info(access_type: AccessType) -> AccessInfo {
 	match access_type {
 		AccessType::Nothing => AccessInfo {
 			stage_mask: ash::vk::PipelineStageFlags::empty(),
@@ -758,7 +758,7 @@ pub(crate) fn get_access_info(access_type: &AccessType) -> AccessInfo {
 	}
 }
 
-pub(crate) fn is_write_access(access_type: &AccessType) -> bool {
+pub(crate) fn is_write_access(access_type: AccessType) -> bool {
 	match access_type {
 		AccessType::CommandBufferWriteNVX => true,
 		AccessType::VertexShaderWrite => true,
