@@ -42,7 +42,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-vk-sync = "0.1.3"
+vk-sync = "0.1.4"
 ```
 
 and this to your crate root:
