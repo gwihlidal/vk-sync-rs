@@ -16,6 +16,7 @@ pub fn pipeline_barrier(
 	let mut src_stage_mask = ash::vk::PipelineStageFlags::TOP_OF_PIPE;
 	let mut dst_stage_mask = ash::vk::PipelineStageFlags::BOTTOM_OF_PIPE;
 
+	// TODO: Optimize out the Vec heap allocations
 	let mut vk_memory_barriers: Vec<ash::vk::MemoryBarrier> = Vec::with_capacity(1);
 	let mut vk_buffer_barriers: Vec<ash::vk::BufferMemoryBarrier> =
 		Vec::with_capacity(buffer_barriers.len());
@@ -119,6 +120,7 @@ pub fn wait_events(
 	let mut src_stage_mask = ash::vk::PipelineStageFlags::TOP_OF_PIPE;
 	let mut dst_stage_mask = ash::vk::PipelineStageFlags::BOTTOM_OF_PIPE;
 
+	// TODO: Optimize out the Vec heap allocations
 	let mut vk_memory_barriers: Vec<ash::vk::MemoryBarrier> = Vec::with_capacity(1);
 	let mut vk_buffer_barriers: Vec<ash::vk::BufferMemoryBarrier> =
 		Vec::with_capacity(buffer_barriers.len());

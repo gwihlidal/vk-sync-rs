@@ -7,8 +7,8 @@ extern crate vk_sync;
 fn compute_write_storage_compute_read_storage() {
 	// Compute write to storage buffer/image, Compute read from storage buffer/image
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![vk_sync::AccessType::ComputeShaderReadOther],
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[vk_sync::AccessType::ComputeShaderReadOther],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -23,8 +23,8 @@ fn compute_write_storage_compute_read_storage() {
 fn compute_read_storage_compute_write_storage() {
 	// Compute read from storage buffer, Compute write from storage buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![vk_sync::AccessType::ComputeShaderReadOther],
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[vk_sync::AccessType::ComputeShaderReadOther],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -39,8 +39,8 @@ fn compute_read_storage_compute_write_storage() {
 fn compute_write_storage_graphics_read_index() {
 	// Compute write to storage buffer, Graphics read as index buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![vk_sync::AccessType::IndexBuffer],
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[vk_sync::AccessType::IndexBuffer],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -55,8 +55,8 @@ fn compute_write_storage_graphics_read_index() {
 fn compute_write_storage_graphics_read_indirect() {
 	// Compute write to storage buffer, Graphics read as indirect buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![vk_sync::AccessType::IndirectBuffer],
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[vk_sync::AccessType::IndirectBuffer],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -74,8 +74,8 @@ fn compute_write_storage_graphics_read_indirect() {
 fn nothing_transfer_read() {
 	// None, Transfer read from buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::Nothing],
-		next_accesses: vec![vk_sync::AccessType::TransferRead],
+		previous_accesses: &[vk_sync::AccessType::Nothing],
+		next_accesses: &[vk_sync::AccessType::TransferRead],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -90,8 +90,8 @@ fn nothing_transfer_read() {
 fn transfer_write_graphics_read_vertex() {
 	// Transfer write to buffer, Graphics read from vertex buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::TransferWrite],
-		next_accesses: vec![vk_sync::AccessType::VertexBuffer],
+		previous_accesses: &[vk_sync::AccessType::TransferWrite],
+		next_accesses: &[vk_sync::AccessType::VertexBuffer],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -112,8 +112,8 @@ fn transfer_write_graphics_read_vertex() {
 fn full_pipeline_barrier() {
 	// Full pipeline barrier
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::General],
-		next_accesses: vec![vk_sync::AccessType::General],
+		previous_accesses: &[vk_sync::AccessType::General],
+		next_accesses: &[vk_sync::AccessType::General],
 	};
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_memory_barrier(&global_barrier);
@@ -134,8 +134,8 @@ fn full_pipeline_barrier() {
 fn compute_write_storage_graphics_read_index_compute_read_uniform() {
 	// Compute write to storage buffer, Graphics read as index buffer & Compute read as uniform buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[
 			vk_sync::AccessType::IndexBuffer,
 			vk_sync::AccessType::ComputeShaderReadUniformBuffer,
 		],
@@ -159,8 +159,8 @@ fn compute_write_storage_graphics_read_index_compute_read_uniform() {
 fn compute_write_texel_graphics_read_indirect_fragment_read_uniform() {
 	// Compute write to storage texel buffer, Graphics read as indirect buffer & fragment read as uniform buffer
 	let global_barrier = vk_sync::GlobalBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[
 			vk_sync::AccessType::IndirectBuffer,
 			vk_sync::AccessType::FragmentShaderReadUniformBuffer,
 		],

@@ -214,9 +214,9 @@ impl Default for ImageLayout {
 ///
 /// Simply define the previous and next access types of resources affected.
 #[derive(Debug, Default, Clone)]
-pub struct GlobalBarrier {
-	pub previous_accesses: Vec<AccessType>,
-	pub next_accesses: Vec<AccessType>,
+pub struct GlobalBarrier<'a> {
+	pub previous_accesses: &'a [AccessType],
+	pub next_accesses: &'a [AccessType],
 }
 
 /// Buffer barriers should only be used when a queue family ownership transfer
@@ -234,9 +234,9 @@ pub struct GlobalBarrier {
 /// queue in the destination queue family, with a semaphore guaranteeing
 /// execution order between them.
 #[derive(Debug, Default, Clone)]
-pub struct BufferBarrier {
-	pub previous_accesses: Vec<AccessType>,
-	pub next_accesses: Vec<AccessType>,
+pub struct BufferBarrier<'a> {
+	pub previous_accesses: &'a [AccessType],
+	pub next_accesses: &'a [AccessType],
 	pub src_queue_family_index: u32,
 	pub dst_queue_family_index: u32,
 	pub buffer: BufferType,
@@ -271,9 +271,9 @@ pub struct BufferBarrier {
 /// A good example of when to use this is when an application re-uses a presented
 /// image after acquiring the next swap chain image.
 #[derive(Debug, Default, Clone)]
-pub struct ImageBarrier {
-	pub previous_accesses: Vec<AccessType>,
-	pub next_accesses: Vec<AccessType>,
+pub struct ImageBarrier<'a> {
+	pub previous_accesses: &'a [AccessType],
+	pub next_accesses: &'a [AccessType],
 	pub previous_layout: ImageLayout,
 	pub next_layout: ImageLayout,
 	pub discard_contents: bool,
@@ -298,7 +298,7 @@ pub fn get_memory_barrier(
 
 	let mut memory_barrier = ash::vk::MemoryBarrier::default();
 
-	for previous_access in &barrier.previous_accesses {
+	for previous_access in barrier.previous_accesses {
 		let previous_info = get_access_info(*previous_access);
 
 		src_stages |= previous_info.stage_mask;
@@ -309,7 +309,7 @@ pub fn get_memory_barrier(
 		}
 	}
 
-	for next_access in &barrier.next_accesses {
+	for next_access in barrier.next_accesses {
 		let next_info = get_access_info(*next_access);
 
 		dst_stages |= next_info.stage_mask;
@@ -356,7 +356,7 @@ pub fn get_buffer_memory_barrier(
 		..Default::default()
 	};
 
-	for previous_access in &barrier.previous_accesses {
+	for previous_access in barrier.previous_accesses {
 		let previous_info = get_access_info(*previous_access);
 
 		src_stages |= previous_info.stage_mask;
@@ -367,7 +367,7 @@ pub fn get_buffer_memory_barrier(
 		}
 	}
 
-	for next_access in &barrier.next_accesses {
+	for next_access in barrier.next_accesses {
 		let next_info = get_access_info(*next_access);
 
 		dst_stages |= next_info.stage_mask;
@@ -413,7 +413,7 @@ pub fn get_image_memory_barrier(
 		..Default::default()
 	};
 
-	for previous_access in &barrier.previous_accesses {
+	for previous_access in barrier.previous_accesses {
 		let previous_info = get_access_info(*previous_access);
 
 		src_stages |= previous_info.stage_mask;
@@ -445,7 +445,7 @@ pub fn get_image_memory_barrier(
 		}
 	}
 
-	for next_access in &barrier.next_accesses {
+	for next_access in barrier.next_accesses {
 		let next_info = get_access_info(*next_access);
 
 		dst_stages |= next_info.stage_mask;

@@ -7,10 +7,8 @@ extern crate vk_sync;
 fn compute_write_storage_fragment_read_sampled() {
 	// Compute write to storage image, Graphics fragment read as sampled image
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ComputeShaderWrite],
-		next_accesses: vec![
-			vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer,
-		],
+		previous_accesses: &[vk_sync::AccessType::ComputeShaderWrite],
+		next_accesses: &[vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -43,8 +41,8 @@ fn compute_write_storage_fragment_read_sampled() {
 fn graphics_write_color_compute_read_sampled() {
 	// Graphics write to color attachment, Compute read from sampled image
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ColorAttachmentWrite],
-		next_accesses: vec![vk_sync::AccessType::ComputeShaderReadSampledImageOrUniformTexelBuffer],
+		previous_accesses: &[vk_sync::AccessType::ColorAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::ComputeShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -86,8 +84,8 @@ fn graphics_write_color_compute_read_sampled() {
 fn graphics_write_depth_compute_read_sampled() {
 	// Graphics write to color attachment, Compute read from sampled image
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::DepthStencilAttachmentWrite],
-		next_accesses: vec![vk_sync::AccessType::ComputeShaderReadSampledImageOrUniformTexelBuffer],
+		previous_accesses: &[vk_sync::AccessType::DepthStencilAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::ComputeShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -130,8 +128,8 @@ fn graphics_write_depth_compute_read_sampled() {
 fn graphics_write_depth_fragment_read_attachment() {
 	// Graphics write to depth attachment, Graphics fragment read from input attachment
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::DepthStencilAttachmentWrite],
-		next_accesses: vec![vk_sync::AccessType::FragmentShaderReadDepthStencilInputAttachment],
+		previous_accesses: &[vk_sync::AccessType::DepthStencilAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::FragmentShaderReadDepthStencilInputAttachment],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -177,10 +175,8 @@ fn graphics_write_depth_fragment_read_attachment() {
 fn graphics_write_depth_fragment_read_sampled() {
 	// Graphics write to depth attachment, Graphics fragment read from sampled image
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::DepthStencilAttachmentWrite],
-		next_accesses: vec![
-			vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer,
-		],
+		previous_accesses: &[vk_sync::AccessType::DepthStencilAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -223,8 +219,8 @@ fn graphics_write_depth_fragment_read_sampled() {
 fn graphics_write_color_fragment_read_attachment() {
 	// Graphics write to color attachment, Graphics fragment read from input attachment
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ColorAttachmentWrite],
-		next_accesses: vec![vk_sync::AccessType::FragmentShaderReadColorInputAttachment],
+		previous_accesses: &[vk_sync::AccessType::ColorAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::FragmentShaderReadColorInputAttachment],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -269,10 +265,8 @@ fn graphics_write_color_fragment_read_attachment() {
 fn graphics_write_color_fragment_read_sampled() {
 	// Graphics write to color attachment, Graphics fragment read from input attachment
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ColorAttachmentWrite],
-		next_accesses: vec![
-			vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer,
-		],
+		previous_accesses: &[vk_sync::AccessType::ColorAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -314,8 +308,8 @@ fn graphics_write_color_fragment_read_sampled() {
 fn graphics_write_color_vertex_read_sampled() {
 	// Graphics write to color attachment, Graphics vertex read from sampled image
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ColorAttachmentWrite],
-		next_accesses: vec![vk_sync::AccessType::VertexShaderReadSampledImageOrUniformTexelBuffer],
+		previous_accesses: &[vk_sync::AccessType::ColorAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::VertexShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -357,10 +351,10 @@ fn graphics_write_color_vertex_read_sampled() {
 fn graphics_read_sampled_graphics_write_color() {
 	// Graphics fragment read from sampled image, Graphics write to color attachment
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![
+		previous_accesses: &[
 			vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer,
 		],
-		next_accesses: vec![vk_sync::AccessType::ColorAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::ColorAttachmentWrite],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -399,10 +393,8 @@ fn graphics_read_sampled_graphics_write_color() {
 fn transfer_write_image_fragment_read_sampled() {
 	// Transfer write to image, Graphics fragment read from sampled image
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::TransferWrite],
-		next_accesses: vec![
-			vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer,
-		],
+		previous_accesses: &[vk_sync::AccessType::TransferWrite],
+		next_accesses: &[vk_sync::AccessType::FragmentShaderReadSampledImageOrUniformTexelBuffer],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
@@ -441,8 +433,8 @@ fn transfer_write_image_fragment_read_sampled() {
 fn graphics_write_color_presentation() {
 	// Graphics color attachment write, Presentation
 	let image_barrier = vk_sync::ImageBarrier {
-		previous_accesses: vec![vk_sync::AccessType::ColorAttachmentWrite],
-		next_accesses: vec![vk_sync::AccessType::Present],
+		previous_accesses: &[vk_sync::AccessType::ColorAttachmentWrite],
+		next_accesses: &[vk_sync::AccessType::Present],
 		previous_layout: vk_sync::ImageLayout::Optimal,
 		next_layout: vk_sync::ImageLayout::Optimal,
 		discard_contents: false,
