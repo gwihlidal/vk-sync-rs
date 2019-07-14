@@ -1,5 +1,21 @@
 # Changes
 
+## 0.1.6 (2019-07-14)
+
+* Removed inefficient Vec<AccessType> on barrier structs in favor of slice references.
+
+## 0.1.5
+
+* Updated to ash 0.29.
+
+## 0.1.4
+
+* Minor optimizations.
+
+## 0.1.3
+
+* Rust 2018 Edition.
+
 ## 0.1.2 (2018-11-17)
 
 * Updated to ash 0.26
