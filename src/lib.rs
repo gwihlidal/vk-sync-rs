@@ -501,8 +501,8 @@ pub(crate) fn get_access_info(access_type: AccessType) -> AccessInfo {
 			image_layout: ash::vk::ImageLayout::UNDEFINED,
 		},
 		AccessType::CommandBufferReadNVX => AccessInfo {
-			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
-			access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_READ_NVX,
+			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PREPROCESS_NV,
+			access_mask: ash::vk::AccessFlags::COMMAND_PREPROCESS_READ_NV,
 			image_layout: ash::vk::ImageLayout::UNDEFINED,
 		},
 		AccessType::IndirectBuffer => AccessInfo {
@@ -670,8 +670,8 @@ pub(crate) fn get_access_info(access_type: AccessType) -> AccessInfo {
 			image_layout: ash::vk::ImageLayout::PRESENT_SRC_KHR,
 		},
 		AccessType::CommandBufferWriteNVX => AccessInfo {
-			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PROCESS_NVX,
-			access_mask: ash::vk::AccessFlags::COMMAND_PROCESS_WRITE_NVX,
+			stage_mask: ash::vk::PipelineStageFlags::COMMAND_PREPROCESS_NV,
+			access_mask: ash::vk::AccessFlags::COMMAND_PREPROCESS_WRITE_NV,
 			image_layout: ash::vk::ImageLayout::UNDEFINED,
 		},
 		AccessType::VertexShaderWrite => AccessInfo {
