@@ -27,9 +27,7 @@ name = "vk_sync"
 path = "src/lib.rs"
 
 [dependencies]
-# ash = { version = "0.29", optional = true }
-ash = {git = "https://github.com/MaikKlein/ash", optional = true }
-
+ash = { version = "0.33", optional = true }
 
 [features]
 default = ["ash_bind"]
