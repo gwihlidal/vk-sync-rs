@@ -4,8 +4,8 @@
 //!
 //! Rather than the complex maze of enums and bit flags in Vulkan - many
 //! combinations of which are invalid or nonsensical - this library collapses
-//! this to a much shorter list of ~40 distinct usage types, and a couple of
-//! options for handling image layouts.
+//! this to a shorter list of distinct usage types, and a couple of options
+//! for handling image layouts.
 //!
 //! Additionally, these usage types provide an easier mapping to other graphics
 //! APIs like DirectX 12.
@@ -171,6 +171,30 @@ pub enum AccessType {
 
 	/// Covers any access - useful for debug, generally avoid for performance reasons
 	General,
+
+	/// Read as a sampled image/uniform texel buffer in a ray tracing shader
+	RayTracingShaderReadSampledImageOrUniformTexelBuffer,
+
+	/// Read as an input attachment with a color format in a ray tracing shader
+	RayTracingShaderReadColorInputAttachment,
+
+	/// Read as an input attachment with a depth/stencil format in a ray tracing shader
+	RayTracingShaderReadDepthStencilInputAttachment,
+
+	/// Read as an acceleration structure in a ray tracing shader
+	RayTracingShaderReadAccelerationStructure,
+
+	/// Read as any other resource in a ray tracing shader
+	RayTracingShaderReadOther,
+
+	/// Written as an acceleration structure during acceleration structure building
+	AccelerationStructureBuildWrite,
+
+	/// Read as an acceleration structure during acceleration structure building (e.g. a BLAS when building a TLAS)
+	AccelerationStructureBuildRead,
+
+	// Written as a buffer during acceleration structure building (e.g. a staging buffer)
+	AccelerationStructureBufferWrite,
 }
 
 impl Default for AccessType {
@@ -749,6 +773,46 @@ pub(crate) fn get_access_info(access_type: AccessType) -> AccessInfo {
 			stage_mask: vk::PipelineStageFlags::ALL_COMMANDS,
 			access_mask: vk::AccessFlags::MEMORY_READ | vk::AccessFlags::MEMORY_WRITE,
 			image_layout: vk::ImageLayout::GENERAL,
+		},
+		AccessType::RayTracingShaderReadSampledImageOrUniformTexelBuffer => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::RAY_TRACING_SHADER_KHR,
+			access_mask: vk::AccessFlags::SHADER_READ,
+			image_layout: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
+		},
+		AccessType::RayTracingShaderReadColorInputAttachment => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::RAY_TRACING_SHADER_KHR,
+			access_mask: vk::AccessFlags::INPUT_ATTACHMENT_READ,
+			image_layout: vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL,
+		},
+		AccessType::RayTracingShaderReadDepthStencilInputAttachment => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::RAY_TRACING_SHADER_KHR,
+			access_mask: vk::AccessFlags::INPUT_ATTACHMENT_READ,
+			image_layout: vk::ImageLayout::DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+		},
+		AccessType::RayTracingShaderReadAccelerationStructure => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::RAY_TRACING_SHADER_KHR,
+			access_mask: vk::AccessFlags::ACCELERATION_STRUCTURE_READ_KHR,
+			image_layout: vk::ImageLayout::UNDEFINED,
+		},
+		AccessType::RayTracingShaderReadOther => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::RAY_TRACING_SHADER_KHR,
+			access_mask: vk::AccessFlags::SHADER_READ,
+			image_layout: vk::ImageLayout::GENERAL,
+		},
+		AccessType::AccelerationStructureBuildWrite => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::ACCELERATION_STRUCTURE_BUILD_KHR,
+			access_mask: vk::AccessFlags::ACCELERATION_STRUCTURE_WRITE_KHR,
+			image_layout: vk::ImageLayout::UNDEFINED,
+		},
+		AccessType::AccelerationStructureBuildRead => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::ACCELERATION_STRUCTURE_BUILD_KHR,
+			access_mask: vk::AccessFlags::ACCELERATION_STRUCTURE_READ_KHR,
+			image_layout: vk::ImageLayout::UNDEFINED,
+		},
+		AccessType::AccelerationStructureBufferWrite => AccessInfo {
+			stage_mask: vk::PipelineStageFlags::ACCELERATION_STRUCTURE_BUILD_KHR,
+			access_mask: vk::AccessFlags::TRANSFER_WRITE,
+			image_layout: vk::ImageLayout::UNDEFINED,
 		},
 	}
 }
