@@ -22,23 +22,5 @@ travis-ci = { repository = "gwihlidal/vk-sync-rs" }
 appveyor = { repository = "gwihlidal/vk-sync-rs" }
 maintenance = { status = "actively-developed" }
 
-[lib]
-name = "vk_sync"
-path = "src/lib.rs"
-
 [dependencies]
-ash = { version = "0.29", optional = true }
-
-[features]
-default = ["ash_bind"]
-ash_bind = ["ash"]
-
-[profile.release]
-lto = true
-opt-level = 3
-codegen-units = 1
-
-[workspace]
-members = [
-    "./",
-]
+ash = "0.33"

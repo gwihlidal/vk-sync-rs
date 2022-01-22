@@ -1,7 +1,6 @@
 //! Tests are based on the common synchronization examples on the Vulkan-Docs wiki: https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples.
 
-extern crate ash;
-extern crate vk_sync;
+use ash::vk;
 
 #[test]
 fn compute_write_storage_fragment_read_sampled() {
@@ -14,9 +13,9 @@ fn compute_write_storage_fragment_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -26,14 +25,14 @@ fn compute_write_storage_fragment_read_sampled() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(src_mask, ash::vk::PipelineStageFlags::COMPUTE_SHADER);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
-	assert_eq!(barrier.src_access_mask, ash::vk::AccessFlags::SHADER_WRITE);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
-	assert_eq!(barrier.old_layout, ash::vk::ImageLayout::GENERAL);
+	assert_eq!(src_mask, vk::PipelineStageFlags::COMPUTE_SHADER);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(barrier.src_access_mask, vk::AccessFlags::SHADER_WRITE);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.old_layout, vk::ImageLayout::GENERAL);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -48,9 +47,9 @@ fn graphics_write_color_compute_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -60,23 +59,20 @@ fn graphics_write_color_compute_read_sampled() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(
-		src_mask,
-		ash::vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT
-	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::COMPUTE_SHADER);
+	assert_eq!(src_mask, vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::COMPUTE_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::COLOR_ATTACHMENT_WRITE
+		vk::AccessFlags::COLOR_ATTACHMENT_WRITE
 	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -91,9 +87,9 @@ fn graphics_write_depth_compute_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -105,22 +101,21 @@ fn graphics_write_depth_compute_read_sampled() {
 
 	assert_eq!(
 		src_mask,
-		ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
-			| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS
+		vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | vk::PipelineStageFlags::LATE_FRAGMENT_TESTS
 	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::COMPUTE_SHADER);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::COMPUTE_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+		vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
 	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -135,9 +130,9 @@ fn graphics_write_depth_fragment_read_attachment() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -149,25 +144,24 @@ fn graphics_write_depth_fragment_read_attachment() {
 
 	assert_eq!(
 		src_mask,
-		ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
-			| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS
+		vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | vk::PipelineStageFlags::LATE_FRAGMENT_TESTS
 	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+		vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
 	);
 	assert_eq!(
 		barrier.dst_access_mask,
-		ash::vk::AccessFlags::INPUT_ATTACHMENT_READ
+		vk::AccessFlags::INPUT_ATTACHMENT_READ
 	);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::DEPTH_STENCIL_READ_ONLY_OPTIMAL
+		vk::ImageLayout::DEPTH_STENCIL_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -182,9 +176,9 @@ fn graphics_write_depth_fragment_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -196,22 +190,21 @@ fn graphics_write_depth_fragment_read_sampled() {
 
 	assert_eq!(
 		src_mask,
-		ash::vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS
-			| ash::vk::PipelineStageFlags::LATE_FRAGMENT_TESTS
+		vk::PipelineStageFlags::EARLY_FRAGMENT_TESTS | vk::PipelineStageFlags::LATE_FRAGMENT_TESTS
 	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
+		vk::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE
 	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -226,9 +219,9 @@ fn graphics_write_color_fragment_read_attachment() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -238,26 +231,23 @@ fn graphics_write_color_fragment_read_attachment() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(
-		src_mask,
-		ash::vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT
-	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(src_mask, vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::COLOR_ATTACHMENT_WRITE
+		vk::AccessFlags::COLOR_ATTACHMENT_WRITE
 	);
 	assert_eq!(
 		barrier.dst_access_mask,
-		ash::vk::AccessFlags::INPUT_ATTACHMENT_READ
+		vk::AccessFlags::INPUT_ATTACHMENT_READ
 	);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -272,9 +262,9 @@ fn graphics_write_color_fragment_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -284,23 +274,20 @@ fn graphics_write_color_fragment_read_sampled() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(
-		src_mask,
-		ash::vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT
-	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(src_mask, vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::COLOR_ATTACHMENT_WRITE
+		vk::AccessFlags::COLOR_ATTACHMENT_WRITE
 	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -315,9 +302,9 @@ fn graphics_write_color_vertex_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -327,23 +314,20 @@ fn graphics_write_color_vertex_read_sampled() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(
-		src_mask,
-		ash::vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT
-	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::VERTEX_SHADER);
+	assert_eq!(src_mask, vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::VERTEX_SHADER);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::COLOR_ATTACHMENT_WRITE
+		vk::AccessFlags::COLOR_ATTACHMENT_WRITE
 	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -360,9 +344,9 @@ fn graphics_read_sampled_graphics_write_color() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -372,20 +356,17 @@ fn graphics_read_sampled_graphics_write_color() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(src_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
-	assert_eq!(
-		dst_mask,
-		ash::vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT
-	);
-	assert_eq!(barrier.src_access_mask, ash::vk::AccessFlags::empty());
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::empty());
+	assert_eq!(src_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT);
+	assert_eq!(barrier.src_access_mask, vk::AccessFlags::empty());
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::empty());
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
 	);
 }
 
@@ -400,9 +381,9 @@ fn transfer_write_image_fragment_read_sampled() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -412,20 +393,14 @@ fn transfer_write_image_fragment_read_sampled() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(src_mask, ash::vk::PipelineStageFlags::TRANSFER);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::FRAGMENT_SHADER);
-	assert_eq!(
-		barrier.src_access_mask,
-		ash::vk::AccessFlags::TRANSFER_WRITE
-	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::SHADER_READ);
-	assert_eq!(
-		barrier.old_layout,
-		ash::vk::ImageLayout::TRANSFER_DST_OPTIMAL
-	);
+	assert_eq!(src_mask, vk::PipelineStageFlags::TRANSFER);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::FRAGMENT_SHADER);
+	assert_eq!(barrier.src_access_mask, vk::AccessFlags::TRANSFER_WRITE);
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::SHADER_READ);
+	assert_eq!(barrier.old_layout, vk::ImageLayout::TRANSFER_DST_OPTIMAL);
 	assert_eq!(
 		barrier.new_layout,
-		ash::vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
+		vk::ImageLayout::SHADER_READ_ONLY_OPTIMAL
 	);
 }
 
@@ -440,9 +415,9 @@ fn graphics_write_color_presentation() {
 		discard_contents: false,
 		src_queue_family_index: 0,
 		dst_queue_family_index: 0,
-		image: ash::vk::Image::null(),
-		range: ash::vk::ImageSubresourceRange {
-			aspect_mask: ash::vk::ImageAspectFlags::empty(),
+		image: vk::Image::null(),
+		range: vk::ImageSubresourceRange {
+			aspect_mask: vk::ImageAspectFlags::empty(),
 			base_mip_level: 0,
 			level_count: 1,
 			base_array_layer: 0,
@@ -452,19 +427,16 @@ fn graphics_write_color_presentation() {
 
 	let (src_mask, dst_mask, barrier) = vk_sync::get_image_memory_barrier(&image_barrier);
 
-	assert_eq!(
-		src_mask,
-		ash::vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT
-	);
-	assert_eq!(dst_mask, ash::vk::PipelineStageFlags::BOTTOM_OF_PIPE);
+	assert_eq!(src_mask, vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT);
+	assert_eq!(dst_mask, vk::PipelineStageFlags::BOTTOM_OF_PIPE);
 	assert_eq!(
 		barrier.src_access_mask,
-		ash::vk::AccessFlags::COLOR_ATTACHMENT_WRITE
+		vk::AccessFlags::COLOR_ATTACHMENT_WRITE
 	);
-	assert_eq!(barrier.dst_access_mask, ash::vk::AccessFlags::empty());
+	assert_eq!(barrier.dst_access_mask, vk::AccessFlags::empty());
 	assert_eq!(
 		barrier.old_layout,
-		ash::vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
+		vk::ImageLayout::COLOR_ATTACHMENT_OPTIMAL
 	);
-	assert_eq!(barrier.new_layout, ash::vk::ImageLayout::PRESENT_SRC_KHR);
+	assert_eq!(barrier.new_layout, vk::ImageLayout::PRESENT_SRC_KHR);
 }
