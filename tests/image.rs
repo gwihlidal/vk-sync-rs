@@ -1,5 +1,8 @@
 //! Tests are based on the common synchronization examples on the Vulkan-Docs wiki: https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples.
 
+#[cfg(feature = "erupt")]
+use erupt::vk;
+#[cfg(not(feature = "erupt"))]
 use ash::vk;
 
 #[test]

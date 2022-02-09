@@ -13,6 +13,9 @@
 //! Use of other synchronization mechanisms such as semaphores, fences and render
 //! passes are not addressed in this library at present.
 
+#[cfg(feature = "erupt")]
+use erupt::vk;
+#[cfg(not(feature = "erupt"))]
 use ash::vk;
 
 pub mod cmd;

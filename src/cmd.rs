@@ -1,4 +1,8 @@
 use super::*;
+
+#[cfg(feature = "erupt")]
+use erupt::{vk, DeviceLoader};
+#[cfg(not(feature = "erupt"))]
 use ash;
 
 /// Simplified wrapper around `vkCmdPipelineBarrier`.
@@ -7,6 +11,9 @@ use ash;
 /// barriers to be passed to `vkCmdPipelineBarrier`.
 /// `command_buffer` is passed unmodified to `vkCmdPipelineBarrier`.
 pub fn pipeline_barrier(
+	#[cfg(feature = "erupt")]
+	device: &DeviceLoader,
+	#[cfg(not(feature = "erupt"))]
 	device: &ash::Device,
 	command_buffer: vk::CommandBuffer,
 	global_barrier: Option<GlobalBarrier>,
@@ -17,9 +24,22 @@ pub fn pipeline_barrier(
 	let mut dst_stage_mask = vk::PipelineStageFlags::BOTTOM_OF_PIPE;
 
 	// TODO: Optimize out the Vec heap allocations
+	#[cfg(feature = "erupt")]
+	let mut vk_memory_barriers: Vec<vk::MemoryBarrierBuilder> = Vec::with_capacity(1);
+	#[cfg(not(feature = "erupt"))]
 	let mut vk_memory_barriers: Vec<vk::MemoryBarrier> = Vec::with_capacity(1);
+
+	#[cfg(feature = "erupt")]
+	let mut vk_buffer_barriers: Vec<vk::BufferMemoryBarrierBuilder> =
+		Vec::with_capacity(buffer_barriers.len());
+	#[cfg(not(feature = "erupt"))]
 	let mut vk_buffer_barriers: Vec<vk::BufferMemoryBarrier> =
 		Vec::with_capacity(buffer_barriers.len());
+
+	#[cfg(feature = "erupt")]
+	let mut vk_image_barriers: Vec<vk::ImageMemoryBarrierBuilder> =
+		Vec::with_capacity(image_barriers.len());
+	#[cfg(not(feature = "erupt"))]
 	let mut vk_image_barriers: Vec<vk::ImageMemoryBarrier> =
 		Vec::with_capacity(image_barriers.len());
 
@@ -28,6 +48,9 @@ pub fn pipeline_barrier(
 		let (src_mask, dst_mask, barrier) = get_memory_barrier(barrier);
 		src_stage_mask |= src_mask;
 		dst_stage_mask |= dst_mask;
+		#[cfg(feature = "erupt")]
+		vk_memory_barriers.push(barrier.into_builder());
+		#[cfg(not(feature = "erupt"))]
 		vk_memory_barriers.push(barrier);
 	}
 
@@ -36,6 +59,9 @@ pub fn pipeline_barrier(
 		let (src_mask, dst_mask, barrier) = get_buffer_memory_barrier(buffer_barrier);
 		src_stage_mask |= src_mask;
 		dst_stage_mask |= dst_mask;
+		#[cfg(feature = "erupt")]
+		vk_buffer_barriers.push(barrier.into_builder());
+		#[cfg(not(feature = "erupt"))]
 		vk_buffer_barriers.push(barrier);
 	}
 
@@ -44,6 +70,9 @@ pub fn pipeline_barrier(
 		let (src_mask, dst_mask, barrier) = get_image_memory_barrier(image_barrier);
 		src_stage_mask |= src_mask;
 		dst_stage_mask |= dst_mask;
+		#[cfg(feature = "erupt")]
+		vk_image_barriers.push(barrier.into_builder());
+		#[cfg(not(feature = "erupt"))]
 		vk_image_barriers.push(barrier);
 	}
 
@@ -64,6 +93,9 @@ pub fn pipeline_barrier(
 /// Sets an event when the accesses defined by `previous_accesses` are completed.
 /// `command_buffer` and `event` are passed unmodified to `vkCmdSetEvent`.
 pub fn set_event(
+	#[cfg(feature = "erupt")]
+	device: &DeviceLoader,
+	#[cfg(not(feature = "erupt"))]
 	device: &ash::Device,
 	command_buffer: vk::CommandBuffer,
 	event: vk::Event,
@@ -84,6 +116,9 @@ pub fn set_event(
 /// Resets an event when the accesses defined by `previous_accesses` are completed.
 /// `command_buffer` and `event` are passed unmodified to `vkCmdResetEvent`.
 pub fn reset_event(
+	#[cfg(feature = "erupt")]
+	device: &DeviceLoader,
+	#[cfg(not(feature = "erupt"))]
 	device: &ash::Device,
 	command_buffer: vk::CommandBuffer,
 	event: vk::Event,
@@ -107,6 +142,9 @@ pub fn reset_event(
 ///
 /// `commandBuffer` and `events` are passed unmodified to `vkCmdWaitEvents`.
 pub fn wait_events(
+	#[cfg(feature = "erupt")]
+	device: &DeviceLoader,
+	#[cfg(not(feature = "erupt"))]
 	device: &ash::Device,
 	command_buffer: vk::CommandBuffer,
 	events: &[vk::Event],
@@ -118,9 +156,22 @@ pub fn wait_events(
 	let mut dst_stage_mask = vk::PipelineStageFlags::BOTTOM_OF_PIPE;
 
 	// TODO: Optimize out the Vec heap allocations
+	#[cfg(feature = "erupt")]
+	let mut vk_memory_barriers: Vec<vk::MemoryBarrierBuilder> = Vec::with_capacity(1);
+	#[cfg(not(feature = "erupt"))]
 	let mut vk_memory_barriers: Vec<vk::MemoryBarrier> = Vec::with_capacity(1);
+
+	#[cfg(feature = "erupt")]
+	let mut vk_buffer_barriers: Vec<vk::BufferMemoryBarrierBuilder> =
+		Vec::with_capacity(buffer_barriers.len());
+	#[cfg(not(feature = "erupt"))]
 	let mut vk_buffer_barriers: Vec<vk::BufferMemoryBarrier> =
 		Vec::with_capacity(buffer_barriers.len());
+
+	#[cfg(feature = "erupt")]
+	let mut vk_image_barriers: Vec<vk::ImageMemoryBarrierBuilder> =
+		Vec::with_capacity(image_barriers.len());
+	#[cfg(not(feature = "erupt"))]
 	let mut vk_image_barriers: Vec<vk::ImageMemoryBarrier> =
 		Vec::with_capacity(image_barriers.len());
 
@@ -129,6 +180,9 @@ pub fn wait_events(
 		let (src_mask, dst_mask, barrier) = get_memory_barrier(barrier);
 		src_stage_mask |= src_mask;
 		dst_stage_mask |= dst_mask;
+		#[cfg(feature = "erupt")]
+		vk_memory_barriers.push(barrier.into_builder());
+		#[cfg(not(feature = "erupt"))]
 		vk_memory_barriers.push(barrier);
 	}
 
@@ -137,6 +191,9 @@ pub fn wait_events(
 		let (src_mask, dst_mask, barrier) = get_buffer_memory_barrier(buffer_barrier);
 		src_stage_mask |= src_mask;
 		dst_stage_mask |= dst_mask;
+		#[cfg(feature = "erupt")]
+		vk_buffer_barriers.push(barrier.into_builder());
+		#[cfg(not(feature = "erupt"))]
 		vk_buffer_barriers.push(barrier);
 	}
 
@@ -145,6 +202,9 @@ pub fn wait_events(
 		let (src_mask, dst_mask, barrier) = get_image_memory_barrier(image_barrier);
 		src_stage_mask |= src_mask;
 		dst_stage_mask |= dst_mask;
+		#[cfg(feature = "erupt")]
+		vk_image_barriers.push(barrier.into_builder());
+		#[cfg(not(feature = "erupt"))]
 		vk_image_barriers.push(barrier);
 	}
 

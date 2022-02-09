@@ -24,3 +24,4 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 ash = "0.33"
+erupt = { version = "0.22.0+204", optional = true }
