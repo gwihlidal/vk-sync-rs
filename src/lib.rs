@@ -18,9 +18,10 @@ use ash::vk;
 pub mod cmd;
 
 /// Defines all potential resource usages
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Default)]
 pub enum AccessType {
 	/// No access. Useful primarily for initialization
+	#[default]
 	Nothing,
 
 	/// Command buffer read operation as defined by `NVX_device_generated_commands`
@@ -197,19 +198,14 @@ pub enum AccessType {
 	AccelerationStructureBufferWrite,
 }
 
-impl Default for AccessType {
-	fn default() -> Self {
-		AccessType::Nothing
-	}
-}
-
 /// Defines a handful of layout options for images.
 /// Rather than a list of all possible image layouts, this reduced list is
 /// correlated with the access types to map to the correct Vulkan layouts.
 /// `Optimal` is usually preferred.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Default)]
 pub enum ImageLayout {
 	/// Choose the most optimal layout for each usage. Performs layout transitions as appropriate for the access.
+	#[default]
 	Optimal,
 
 	/// Layout accessible by all Vulkan access types on a device - no layout transitions except for presentation
@@ -219,12 +215,6 @@ pub enum ImageLayout {
 	/// Requires `VK_KHR_shared_presentable_image` to be enabled, and this can only be used for shared presentable
 	/// images (i.e. single-buffered swap chains).
 	GeneralAndPresentation,
-}
-
-impl Default for ImageLayout {
-	fn default() -> Self {
-		ImageLayout::Optimal
-	}
 }
 
 /// Global barriers define a set of accesses on multiple resources at once.
@@ -818,23 +808,23 @@ pub(crate) fn get_access_info(access_type: AccessType) -> AccessInfo {
 }
 
 pub(crate) fn is_write_access(access_type: AccessType) -> bool {
-	match access_type {
-		AccessType::CommandBufferWriteNVX => true,
-		AccessType::VertexShaderWrite => true,
-		AccessType::TessellationControlShaderWrite => true,
-		AccessType::TessellationEvaluationShaderWrite => true,
-		AccessType::GeometryShaderWrite => true,
-		AccessType::FragmentShaderWrite => true,
-		AccessType::ColorAttachmentWrite => true,
-		AccessType::DepthStencilAttachmentWrite => true,
-		AccessType::DepthAttachmentWriteStencilReadOnly => true,
-		AccessType::StencilAttachmentWriteDepthReadOnly => true,
-		AccessType::ComputeShaderWrite => true,
-		AccessType::AnyShaderWrite => true,
-		AccessType::TransferWrite => true,
-		AccessType::HostWrite => true,
-		AccessType::ColorAttachmentReadWrite => true,
-		AccessType::General => true,
-		_ => false,
-	}
+	matches!(
+		access_type,
+		AccessType::CommandBufferWriteNVX
+			| AccessType::VertexShaderWrite
+			| AccessType::TessellationControlShaderWrite
+			| AccessType::TessellationEvaluationShaderWrite
+			| AccessType::GeometryShaderWrite
+			| AccessType::FragmentShaderWrite
+			| AccessType::ColorAttachmentWrite
+			| AccessType::DepthStencilAttachmentWrite
+			| AccessType::DepthAttachmentWriteStencilReadOnly
+			| AccessType::StencilAttachmentWriteDepthReadOnly
+			| AccessType::ComputeShaderWrite
+			| AccessType::AnyShaderWrite
+			| AccessType::TransferWrite
+			| AccessType::HostWrite
+			| AccessType::ColorAttachmentReadWrite
+			| AccessType::General
+	)
 }
