@@ -15,7 +15,7 @@ exclude = [
     ".gitignore",
     "appveyor.yml"
 ]
-edition = "2018"
+edition = "2024"
 
 [badges]
 travis-ci = { repository = "gwihlidal/vk-sync-rs" }
@@ -23,4 +23,4 @@ appveyor = { repository = "gwihlidal/vk-sync-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-ash = "0.33"
+ash = "0.38"
