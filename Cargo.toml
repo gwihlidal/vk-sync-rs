@@ -23,4 +23,4 @@ appveyor = { repository = "gwihlidal/vk-sync-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-ash = "0.33"
+ash = "0.38"
